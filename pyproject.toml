@@ -5,6 +5,7 @@ description = "Competitive Frogramming"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "pydantic>=2.12.5",
     "typer>=0.24.1",
 ]
 
