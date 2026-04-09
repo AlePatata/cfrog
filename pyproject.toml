@@ -11,6 +11,7 @@ dependencies = [
 
 [project.scripts]
 cfrog = "cfrog.main:app"
+frog = "cfrog.main:app"
 
 [tool.uv]
 package = true
