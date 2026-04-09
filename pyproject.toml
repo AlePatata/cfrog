@@ -1,0 +1,13 @@
+[project]
+name = "frog"
+version = "0.1.0"
+description = "Competitive Frogramming"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+frog = "frog.main:main"
+
+[tool.uv]
+package = true
