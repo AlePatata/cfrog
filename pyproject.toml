@@ -1,13 +1,15 @@
 [project]
-name = "frog"
+name = "cfrog"
 version = "0.1.0"
 description = "Competitive Frogramming"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "typer>=0.24.1",
+]
 
 [project.scripts]
-frog = "frog.main:main"
+cfrog = "cfrog.main:app"
 
 [tool.uv]
 package = true
