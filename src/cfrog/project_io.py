@@ -1,17 +1,25 @@
 import json
-from .models import Project
+from .models import Project, Problem
 
 def load_project() -> Project:
     with open("cfrog.json", "r", encoding="utf-8") as f:
         project_info = json.load(f)
     return Project.model_validate(project_info)
 
+def write_project(project: Project):
+    with open("cfrog.json", "w", encoding="utf-8") as f:
+        f.write(project.model_dump_json(indent=2))
+
+
 def init_project():
     project = Project(
         name="frog",
-        problems=[],
-        contests=[],
+        problems={},
+        contests={},
     )
-    with open("cfrog.json", "w", encoding="utf-8") as f:
-        f.write(project.model_dump_json(indent=2))
+    write_project(project)
+
+def write_problem(problem: Problem):
+    with open(f"{problem.name}.cpp", "w", encoding="utf-8") as f:
+        f.write("// hello frog!")
 

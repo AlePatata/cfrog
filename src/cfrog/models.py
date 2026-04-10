@@ -7,9 +7,9 @@ class TestCase(BaseModel):
 class Problem(BaseModel):
     name: str
     url: str
-    accepted: bool
-    problem_statement: str
-    examples: list[TestCase]
+    accepted: bool = False
+    problem_statement: str = ""
+    examples: list[TestCase] = []
 
 class Contest(BaseModel):
     name: str
@@ -18,6 +18,6 @@ class Contest(BaseModel):
 
 class Project(BaseModel):
     name: str
-    problems: list[Problem]
-    contests: list[Contest]
+    problems: dict[str, Problem]
+    contests: dict[str, Contest]
 
