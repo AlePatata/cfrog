@@ -17,7 +17,7 @@ def init():
 def add(name: str, template: bool = False):
     project = load_project()
     problem = Problem(name=name, url="", accepted=True, problem_statement="", examples=[])
-    write_problem(problem)
+    write_problem(problem, template=template)
     if problem.name in project.problems:
         return
     project.problems[name] = problem
