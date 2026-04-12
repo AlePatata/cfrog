@@ -1,23 +1,42 @@
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    DirectoryPath,
+    FilePath,
+    HttpUrl,
+)
 
-class TestCase(BaseModel):
+
+class BaseCfrog(BaseModel):
+    model_config = ConfigDict(
+        validate_assignment=True,
+        strict=True,
+    )
+
+
+class TestCase(BaseCfrog):
     input: str
     output: str
 
-class Problem(BaseModel):
+
+class Problem(BaseCfrog):
+    path: FilePath
     name: str
-    url: str
+    url: HttpUrl | None
     accepted: bool = False
     problem_statement: str = ""
     examples: list[TestCase] = []
 
-class Contest(BaseModel):
+
+class Contest(BaseCfrog):
+    path: FilePath
     name: str
     url: str
     problems: list[Problem]
 
-class Project(BaseModel):
-    name: str
-    problems: dict[str, Problem]
-    contests: dict[str, Contest]
 
+class Project(BaseCfrog):
+    name: str
+    problems: list[Problem]
+    contests: list[Contest]

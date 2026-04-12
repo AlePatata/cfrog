@@ -1,28 +1,42 @@
 import typer
-from .project_io import load_project, init_project, write_problem, write_project
+from pathlib import Path
+from .project_io import load_project, write_problem, write_project
 from rich import print
 from .models import Project, Problem
 
 app = typer.Typer()
 
-@app.command()
-def show():
-    print(load_project().model_dump())
 
 @app.command()
 def init():
-    init_project()
+    project = Project(
+        name="frog",
+        problems=[],
+        contests=[],
+    )
+    write_project(project)
+
+
+@app.command()
+def show():
+    project = load_project()
+    print(project)
+
 
 @app.command()
 def add(name: str, template: bool = False):
+    write_problem(name, template=template)
+    problem = Problem(
+        path=Path(f"{name}.cpp"),
+        name=name,
+        url=None,
+        problem_statement="",
+    )
     project = load_project()
-    problem = Problem(name=name, url="", accepted=True, problem_statement="", examples=[])
-    write_problem(problem, template=template)
-    if problem.name in project.problems:
-        return
-    project.problems[name] = problem
+    project.problems.append(problem)
     write_project(project)
     show()
+
 
 if __name__ == "__main__":
     app()
