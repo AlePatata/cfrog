@@ -1,6 +1,9 @@
 import typer
 from pathlib import Path
+import subprocess
+import os
 from .project_io import load_project, write_problem, write_project
+from .run import compile
 from rich import print
 from .models import Project, Problem
 
@@ -35,7 +38,12 @@ def add(name: str, template: bool = False):
     project = load_project()
     project.problems.append(problem)
     write_project(project)
-    show()
+
+
+@app.command()
+def run(file):
+    compile(Path(file), Path("a.out"))
+    os.execv("a.out", ["a.out"])
 
 
 if __name__ == "__main__":
