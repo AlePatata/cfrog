@@ -1,11 +1,12 @@
-import typer
-from pathlib import Path
-import subprocess
 import os
+from pathlib import Path
+
+import typer
+from rich import print  # noqa: A004
+
+from .models import Problem, Project
 from .project_io import load_project, write_problem, write_project
-from .run import compile
-from rich import print
-from .models import Project, Problem
+from .run import build
 
 app = typer.Typer()
 
@@ -42,7 +43,7 @@ def add(name: str, template: bool = False):
 
 @app.command()
 def run(file):
-    compile(Path(file), Path("a.out"))
+    build(Path(file), Path("a.out"))
     os.execv("a.out", ["a.out"])
 
 

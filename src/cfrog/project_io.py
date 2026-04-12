@@ -1,5 +1,4 @@
-import json
-from .models import Project, Problem
+from .models import Project
 
 template_content = """#include <bits/stdc++.h>
 
