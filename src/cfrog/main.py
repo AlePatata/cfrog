@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from pydantic import HttpUrl, ValidationError
@@ -38,14 +39,22 @@ def list():
     table = Table("name", "path", "status")
 
     for problem in project.problems:
-        status = "[green]accepted[/green]" if problem.accepted else "[yellow]unsolved[/yellow]"
+        status = (
+            "[green]accepted[/green]"
+            if problem.accepted
+            else "[yellow]unsolved[/yellow]"
+        )
         table.add_row(problem.name, str(problem.path), status)
 
     console.print(table)
 
 
 @app.command()
-def add(name: str, url: str, template: bool = True):
+def add(
+    name: Annotated[str, typer.Option(prompt=True)],
+    url: Annotated[str, typer.Option(prompt=True)],
+    template: bool = True,
+):
     project = load_project()
     problem = next(
         (problem for problem in project.problems if problem.name == name), None
