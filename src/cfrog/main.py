@@ -1,12 +1,13 @@
+import fnmatch
 import os
 from pathlib import Path
 from typing import Annotated
 
 import typer
-from pydantic import HttpUrl, ValidationError
+from pydantic import HttpUrl
 from rich import print  # noqa: A004
-from rich.table import Table
 from rich.console import Console
+from rich.table import Table
 
 from .models import Problem, Project
 from .project_io import load_project, write_problem, write_project
@@ -31,14 +32,25 @@ def show():
     project = load_project()
     print(project)
 
+def problem_name_completion(incomplete: str):
+    project = load_project()
+    names = [problem.name for problem in project.problems]
+    completion = []
+    for name in names:
+        if name.startswith(incomplete):
+            completion.append(name)
+    return completion
+
 
 @app.command(name="list")
 @app.command(name="ls")
-def list():
+def list(name: Annotated[str | None, typer.Argument(autocompletion=problem_name_completion)] = None):
     project = load_project()
     table = Table("name", "path", "status")
 
     for problem in project.problems:
+        if name and problem.name != name:
+            continue
         status = (
             "[green]accepted[/green]"
             if problem.accepted
