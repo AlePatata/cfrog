@@ -45,8 +45,7 @@ def list():
 
 
 @app.command()
-def add(url: str, template: bool = True, name: str | None = None):
-    name = name or url.split("/")[-1]
+def add(name: str, url: str, template: bool = True):
     write_problem(name, template=template)
     problem = Problem(
         path=Path(f"{name}.cpp"),
