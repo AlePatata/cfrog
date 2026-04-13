@@ -46,6 +46,14 @@ def list():
 
 @app.command()
 def add(name: str, url: str, template: bool = True):
+    project = load_project()
+    problem = next(
+        (problem for problem in project.problems if problem.name == name), None
+    )
+    if problem:
+        print("[red]Problem name already exists[/red]")
+        raise typer.Exit(1)
+
     write_problem(name, template=template)
     problem = Problem(
         path=Path(f"{name}.cpp"),
@@ -53,7 +61,6 @@ def add(name: str, url: str, template: bool = True):
         url=HttpUrl(url),
         accepted=False,
     )
-    project = load_project()
     project.problems.append(problem)
     write_project(project)
 
