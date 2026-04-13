@@ -4,11 +4,14 @@ from pathlib import Path
 import typer
 from pydantic import HttpUrl, ValidationError
 from rich import print  # noqa: A004
+from rich.table import Table
+from rich.console import Console
 
 from .models import Problem, Project
 from .project_io import load_project, write_problem, write_project
 from .run import build
 
+console = Console()
 app = typer.Typer()
 
 
@@ -28,9 +31,22 @@ def show():
     print(project)
 
 
+@app.command(name="list")
+@app.command(name="ls")
+def list():
+    project = load_project()
+    table = Table("name", "path", "status")
+
+    for problem in project.problems:
+        status = "[green]accepted[/green]" if problem.accepted else "[yellow]unsolved[/yellow]"
+        table.add_row(problem.name, str(problem.path), status)
+
+    console.print(table)
+
+
 @app.command()
-def add(url: str, template: bool = True):
-    name = url.split("/")[-1]
+def add(url: str, template: bool = True, name: str | None = None):
+    name = name or url.split("/")[-1]
     write_problem(name, template=template)
     problem = Problem(
         path=Path(f"{name}.cpp"),
@@ -47,8 +63,7 @@ def add(url: str, template: bool = True):
 def accept(problem_name: str):
     project = load_project()
     problem = next(
-        (problem for problem in project.problems if problem.name == problem_name),
-        None
+        (problem for problem in project.problems if problem.name == problem_name), None
     )
     if problem is None:
         print("Problem not found.")
