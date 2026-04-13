@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import typer
+from pydantic import HttpUrl, ValidationError
 from rich import print  # noqa: A004
 
 from .models import Problem, Project
@@ -28,16 +29,31 @@ def show():
 
 
 @app.command()
-def add(name: str, template: bool = False):
+def add(url: str, template: bool = True):
+    name = url.split("/")[-1]
     write_problem(name, template=template)
     problem = Problem(
         path=Path(f"{name}.cpp"),
         name=name,
-        url=None,
-        problem_statement="",
+        url=HttpUrl(url),
+        accepted=False,
     )
     project = load_project()
     project.problems.append(problem)
+    write_project(project)
+
+
+@app.command()
+def accept(problem_name: str):
+    project = load_project()
+    problem = next(
+        (problem for problem in project.problems if problem.name == problem_name),
+        None
+    )
+    if problem is None:
+        print("Problem not found.")
+        return
+    problem.accepted = True
     write_project(project)
 
 
