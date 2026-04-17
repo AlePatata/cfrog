@@ -36,5 +36,6 @@ class Contest(BaseCfrog):
 
 class Project(BaseCfrog):
     name: str
+    compile_command: list[str]
     problems: list[Problem]
     contests: list[Contest]

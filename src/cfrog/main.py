@@ -1,4 +1,3 @@
-import fnmatch
 import os
 from pathlib import Path
 from typing import Annotated
@@ -21,6 +20,19 @@ app = typer.Typer()
 def init():
     project = Project(
         name="frog",
+        compile_command=[
+            "g++",
+            "-Wall",
+            "-Wextra",
+            "-pedantic",
+            "-std=c++17",
+            "-Wshadow",
+            "-Wformat=2",
+            "-Wfloat-equal",
+            "-Wconversion",
+            "-D_GLIBCXX_DEBUG",
+            "-D_GLIBCXX_DEBUG_PEDANTIC",
+        ],
         problems=[],
         contests=[],
     )
@@ -31,6 +43,7 @@ def init():
 def show():
     project = load_project()
     print(project)
+
 
 def problem_name_completion(incomplete: str):
     project = load_project()
@@ -44,7 +57,11 @@ def problem_name_completion(incomplete: str):
 
 @app.command(name="list")
 @app.command(name="ls")
-def list(name: Annotated[str | None, typer.Argument(autocompletion=problem_name_completion)] = None):
+def list_problems(
+    name: Annotated[
+        str | None, typer.Argument(autocompletion=problem_name_completion)
+    ] = None,
+):
     project = load_project()
     table = Table("name", "path", "status")
 
@@ -100,8 +117,12 @@ def accept(problem_name: str):
 
 
 @app.command()
-def run(file):
-    build(Path(file), Path("a.out"))
+def run(
+    name: Annotated[
+        str | None, typer.Argument(autocompletion=problem_name_completion)
+    ] = None,
+):
+    build(Path(f"{name}.cpp"), Path("a.out"))
     os.execv("a.out", ["a.out"])
 
 
