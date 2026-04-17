@@ -10,9 +10,9 @@ def needs_rebuild(source: Path, output: Path) -> bool:
     return os.path.getmtime(source) > out_mtime
 
 
-def build(source: Path, output: Path):
+def build(source: Path, output: Path, compile_command: list[str]):
     if not needs_rebuild(source, output):
         return
-    cmd = ["g++", str(source)]
+    cmd = compile_command + [str(source)]
     print(" ".join(cmd))
     subprocess.run(cmd, check=True)

@@ -81,7 +81,7 @@ def list_problems(
 @app.command()
 def add(
     name: Annotated[str, typer.Option(prompt=True)],
-    url: Annotated[str, typer.Option(prompt=True)],
+    url: Annotated[str | None, typer.Option(prompt=False)] = None,
     template: bool = True,
 ):
     project = load_project()
@@ -96,7 +96,7 @@ def add(
     problem = Problem(
         path=Path(f"{name}.cpp"),
         name=name,
-        url=HttpUrl(url),
+        url=HttpUrl(url) if url else None,
         accepted=False,
     )
     project.problems.append(problem)
@@ -122,7 +122,9 @@ def run(
         str | None, typer.Argument(autocompletion=problem_name_completion)
     ] = None,
 ):
-    build(Path(f"{name}.cpp"), Path("a.out"))
+    project = load_project()
+    print(" ".join(project.compile_command + [f"{name}.cpp"]))
+    build(Path(f"{name}.cpp"), Path("a.out"), project.compile_command)
     os.execv("a.out", ["a.out"])
 
 
